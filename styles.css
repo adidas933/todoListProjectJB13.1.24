@@ -1,0 +1,114 @@
+body {
+  background-image: url('./tile.jpg');
+  align-items: center;
+  justify-content: center;
+}
+
+main {
+  background-image: url('./formbg.jpg');
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  max-width: 75%;
+  margin: auto;
+}
+
+.mainInnerDiv {
+  display: flex;
+}
+
+.taskInput, .dateInput, .hourInput, .input-group-text {
+  margin-top: 13px;
+  text-align: center;
+}
+
+.saveTaskBtn, .fillInputs, .resetAllBtn {
+  margin: 14px 0;
+  bottom: 2px;
+  }
+
+  .tasksContainer {
+    display: flex;
+    flex-wrap: wrap;
+    max-width: 85%;
+    margin: auto;
+  }
+
+  .deleteBtn {
+    position: relative;
+    left: 149px;
+    top: 20px;
+    opacity: 0;
+    background-color: transparent;
+    border: none;
+    font-size: 20px;
+  }
+
+  .deleteBtn:hover, .markFinishedTask:hover {
+    background-color: rgba(188, 185, 186, 0.3);
+    border-radius: 50%;
+  }
+
+  .taskDiv {
+    background-image: url('./notebg.png');
+    width: 200px;
+    height: 250px;
+    animation: animate1 1s forwards ease-in;
+  }
+
+  @keyframes animate1 {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+
+  .taskDiv:hover .deleteBtn,.taskDiv:hover .markFinishedTask{
+    opacity: 1;
+    transition: all ease-out 0.3s;
+  }
+
+  .taskText {
+    padding-left: 8px;
+    padding-bottom: 4px;
+    margin-bottom: 25px;
+    margin-top: 22px;
+    overflow-wrap: break-word;
+    width: 174px;
+    background-color: transparent;
+    border: none;
+    height: 143px;
+  }
+
+  .taskText:focus {
+    outline: none;
+  }
+
+  .bottomLineDiv {
+    padding-left: 10px;
+    color: red;
+  }
+
+  .bottomLineDiv p {
+    margin-top: -58px;
+    margin-bottom: 54px;  }
+  
+  .bottomLineDiv:last-child {
+    margin-top: 30px;
+  }
+
+  .markFinishedTask {
+    position: relative;
+    left: 92px;
+    top: 18px;
+    opacity: 0;
+    background-color: transparent;
+    border: none;
+    font-size: 20px;
+  }
+
+  .fa-text-slash:before {
+    font-size: 15px;
+  }
