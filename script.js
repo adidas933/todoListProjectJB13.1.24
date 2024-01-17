@@ -1,6 +1,11 @@
-// TODO: sort by: newest, alphabetic
-// TODO: search
-// TODO: pick a color that will affect the background of note
+// TODO: drag note with mouse to another spot
+
+// TODO: sort by: color/urgency
+// TODO: make the edit button change the date and time as well as the text of task.
+// TODO: pick a color that will affect the background of note for urgency
+// TODO: change style and organize all web page
+// TODO: search bar
+
 
 // Variables
 const taskInput = document.querySelector('.taskInput');
@@ -8,20 +13,21 @@ const dateInput = document.querySelector('.dateInput');
 const hourInput = document.querySelector('.hourInput');
 const saveTaskBtn = document.querySelector('.saveTaskBtn');
 const tasksContainer = document.querySelector('.tasksContainer');
-const outputsAsArray = JSON.parse(localStorage.getItem('outputsAsArray')) || []; 
+let outputsAsArray = JSON.parse(localStorage.getItem('outputsAsArray')) || []; 
 
-let  tasksObj = {
-    taskContent: taskInput.value,
-    date: dateInput.value,
-    hour: hourInput.value,
-    isLineThrough: false,
-  }
+let tasksObj = {
+      taskContent: taskInput.value,
+      date: dateInput.value,
+      hour: hourInput.value,
+      isLineThrough: false,
+      isSaveChangesCreated: false,
+    }
   
-  function loadItems() { 
-    outputsAsArray.forEach(tasksObj => {
-      const taskText = createElements(tasksObj); 
-      taskText.value = tasksObj.taskContent;
-      if (tasksObj.isLineThrough) {
+function loadItems() { 
+  outputsAsArray.forEach(tasksObj => {
+    const taskText = createElements(tasksObj); 
+    taskText.value = tasksObj.taskContent;
+    if (tasksObj.isLineThrough) {
       // Mark finished task
       taskText.style.textDecoration = 'line-through';
       tasksObj.isLineThrough = true;
@@ -49,40 +55,45 @@ const createElements = (tasksObj) => {
     }
   });
     
-// Line through task
-const addFinishedTaskBtn = taskDiv.appendChild(document.createElement('button'));
-addFinishedTaskBtn.className = 'markFinishedTask fa-solid fa-text-slash';
+  // Line through task
+  const addFinishedTaskBtn = taskDiv.appendChild(document.createElement('button'));
+  addFinishedTaskBtn.className = 'markFinishedTask fa-solid fa-text-slash';
 
-addFinishedTaskBtn.addEventListener('click', () => {
-  if ((taskText.style.textDecoration === 'line-through') && tasksObj.isLineThrough) {
-    taskText.style.textDecoration = 'none';
-    tasksObj.isLineThrough = false;
+  addFinishedTaskBtn.addEventListener('click', () => {
+    taskText.style.textDecoration = taskText.style.textDecoration === 'line-through' ? 'none' : 'line-through';
+    tasksObj.isLineThrough = tasksObj.isLineThrough ? false : true;
     localStorage.setItem('outputsAsArray', JSON.stringify(outputsAsArray));
-  } else {
-    taskText.style.textDecoration = 'line-through';
-    tasksObj.isLineThrough = true;
-    localStorage.setItem('outputsAsArray', JSON.stringify(outputsAsArray));
-  }
   });
 
   // Edit task
   const editBtn = taskDiv.appendChild(document.createElement('button'));
   editBtn.className = 'editBtn fa-solid fa-pen-to-square';
-
+  const saveChangesBtn = taskDiv.appendChild(document.createElement('button'));
+  saveChangesBtn.className = 'saveChangesBtn';
+  saveChangesBtn.innerText = 'Save changes';
+  saveChangesBtn.style.visibility = 'hidden';
+  
   editBtn.addEventListener('click', () => {
-    taskText.readOnly = false;
 
-    const saveChangesBtn = taskDiv.appendChild(document.createElement('button'));
-    saveChangesBtn.className = 'saveChangesBtn';
-    saveChangesBtn.innerText = 'Save changes';
-    
-    saveChangesBtn.addEventListener('click', () => {
-      saveChangesBtn.remove();
+    if (saveChangesBtn.style.visibility === 'hidden' && !tasksObj.isSaveChangesCreated) {
+      saveChangesBtn.style.visibility = 'visible';
+      tasksObj.isSaveChangesCreated = true;  
+      taskText.readOnly = false;
+    } else {
+      saveChangesBtn.style.visibility = 'hidden';
+      tasksObj.isSaveChangesCreated = false;
       taskText.readOnly = true;
-      tasksObj.taskContent = taskText.value;
-      localStorage.setItem('outputsAsArray', JSON.stringify(outputsAsArray));
-    })
+    }
+    localStorage.setItem('outputsAsArray', JSON.stringify(outputsAsArray));
   })
+
+  saveChangesBtn.addEventListener('click', () => {
+    taskText.readOnly = true;
+    saveChangesBtn.style.visibility = 'hidden';
+    tasksObj.isSaveChangesCreated = false;
+    tasksObj.taskContent = taskText.value;
+    localStorage.setItem('outputsAsArray', JSON.stringify(outputsAsArray));
+})
 
   // Task text
   const taskText = document.createElement('textarea');
@@ -108,12 +119,14 @@ addFinishedTaskBtn.addEventListener('click', () => {
   bottomLineHour.innerText = tasksObj.hour;
   bottomLineHour.className = 'bottomLineHour';
   
-  // Reset inputs
+  clearInputs();
+  return taskText;
+}
+
+const clearInputs = () => {
   taskInput.value = '';
   dateInput.value = '';
   hourInput.value = '';
-
-  return taskText;
 }
 
 function isEmpty() {
@@ -125,28 +138,51 @@ function isEmpty() {
         date: dateInput.value,
         hour: hourInput.value,
         isLineThrough: false,
+        isSaveChangesCreated: false,
       }
       outputsAsArray.push(tasksObj); 
       createElements(tasksObj); 
       localStorage.setItem('outputsAsArray', JSON.stringify(outputsAsArray));
     }
   }
+
+const resetAll = () => {
+  tasksContainer.innerHTML = '';
+  localStorage.clear();
+  outputsAsArray = JSON.parse(localStorage.getItem('outputsAsArray')) || [];
+  loadItems();
+}
+
+const sortBy = (parameter) => {
+  outputsAsArray = outputsAsArray.sort(function (objectA, objectB) {
+    if (objectA[parameter] > objectB[parameter]) {
+      return 1;
+    }
+    if (objectA[parameter] < objectB[parameter]) {
+      return -1;
+    }
+    return 0;
+  })
+  localStorage.setItem('outputsAsArray', JSON.stringify(outputsAsArray));
+  tasksContainer.innerHTML = '';
+  loadItems();
+}
   
-  const resetAll = () => {
-    localStorage.clear();
-    location.reload(); 
-  }
-  
-  const fillInputs = () => {
-    taskInput.value = 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Expedita similique laudantium soluta quos modi, sint labore. Nulla voluptatibus quaerat commodi dicta consequuntur aspernatur exercitationem aperiam reiciendis! In illo laudantium libero doloribus sequi asperiores tenetur cumque, distinctio exercitationem vel est ea corporis eius nemo, quibusdam omnis vitae at a sint enim? Minus blanditiis pariatur quidem ducimus, voluptatibus itaque distinctio adipisci aperiam a id quam odio unde expedita sit. Molestias quo aut consectetur aspernatur ab quisquam nesciunt, sed ipsam iure repudiandae similique ut perspiciatis voluptate cum. Sed, praesentium voluptas recusandae veritatis modi doloremque nostrum ipsum quos aspernatur natus magni optio! Voluptas, alias.'
-    dateInput.value = '2024-01-12';
-    hourInput.value = '22:00';
-  }
-  
-  // Event listeners
-  document.addEventListener('DOMContentLoaded', loadItems); 
-  saveTaskBtn.addEventListener('click', isEmpty);
-  document.querySelector('.resetAllBtn').addEventListener('click', resetAll);
-  document.querySelector('.fillInputs').addEventListener('click', fillInputs);
-  
-  
+const fillInputs = () => {
+  taskInput.value = 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Expedita similique laudantium soluta quos modi, sint labore. Nulla voluptatibus quaerat commodi dicta consequuntur aspernatur exercitationem aperiam reiciendis! In illo laudantium libero doloribus sequi asperiores tenetur cumque, distinctio exercitationem vel est ea corporis eius nemo, quibusdam omnis vitae at a sint enim? Minus blanditiis pariatur quidem ducimus, voluptatibus itaque distinctio adipisci aperiam a id quam odio unde expedita sit. Molestias quo aut consectetur aspernatur ab quisquam nesciunt, sed ipsam iure repudiandae similique ut perspiciatis voluptate cum. Sed, praesentium voluptas recusandae veritatis modi doloremque nostrum ipsum quos aspernatur natus magni optio! Voluptas, alias.'
+  dateInput.value = '2024-01-12';
+  hourInput.value = '22:00';
+}
+
+// Event listeners
+document.addEventListener('DOMContentLoaded', loadItems); 
+saveTaskBtn.addEventListener('click', isEmpty);
+document.querySelector('.resetAllBtn').addEventListener('click', resetAll);
+document.querySelector('.fillInputs').addEventListener('click', fillInputs);
+
+document.querySelector('.sortByNameBtn').addEventListener('click', () => {
+  sortBy('taskContent'); 
+});
+document.querySelector('.sortByDateBtn').addEventListener('click', () => {
+  sortBy('date');
+});
