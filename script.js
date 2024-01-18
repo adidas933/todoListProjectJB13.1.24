@@ -1,12 +1,3 @@
-// TODO: drag note with mouse to another spot
-
-// TODO: sort by: color/urgency
-// TODO: make the edit button change the date and time as well as the text of task.
-// TODO: pick a color that will affect the background of note for urgency
-// TODO: change style and organize all web page
-// TODO: search bar
-
-
 // Variables
 const taskInput = document.querySelector('.taskInput');
 const dateInput = document.querySelector('.dateInput');

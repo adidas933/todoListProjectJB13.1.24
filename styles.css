@@ -9,8 +9,9 @@ main {
   align-items: center;
   justify-content: center;
   display: flex; 
-  max-width: 75%;
+  max-width: 70%;
   margin: auto;
+  min-width: 420px;
 }
 
 .mainHeading {
@@ -161,19 +162,6 @@ main {
   border-radius: 50%;
 }
 
-.buttonsContainer {
-  display: flex;
-  position: relative;
-}
-
-.searchInput {
-
-}
-
-.sortByBtn {
-
-}
-
 .sortAndSearch {
   display: flex;
     height: 37px;
@@ -184,3 +172,4 @@ main {
 .pinkBtns {
   top: 8px;
 }
+
